@@ -1,0 +1,40 @@
+name: Z2M Discovery Translator
+version: "1.0.0"
+slug: z2m_discovery_translator
+description: Translate Zigbee2MQTT Home Assistant MQTT Discovery names
+url: https://github.com/Gabin-CC/Z2M-Discovery-Translator
+
+arch:
+  - aarch64
+  - amd64
+  - armv7
+
+startup: services
+boot: auto
+init: false
+
+hassio_api: true
+hassio_role: default
+
+services:
+  - mqtt:need
+
+options:
+  mqtt_host: core-mosquitto
+  mqtt_port: 1883
+  mqtt_user: ""
+  mqtt_password: ""
+  source_prefix: z2m_discovery
+  target_prefix: homeassistant
+  language: fr
+  log_payloads: false
+
+schema:
+  mqtt_host: str
+  mqtt_port: int
+  mqtt_user: str
+  mqtt_password: password
+  source_prefix: str
+  target_prefix: str
+  language: list(fr|de|es)
+  log_payloads: bool
