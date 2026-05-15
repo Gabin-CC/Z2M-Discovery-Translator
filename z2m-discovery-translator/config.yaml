@@ -1,5 +1,5 @@
 name: Z2M Discovery Translator
-version: "1.0.0"
+version: "1.0.1"
 slug: z2m_discovery_translator
 description: Translate Zigbee2MQTT Home Assistant MQTT Discovery names
 url: https://github.com/Gabin-CC/Z2M-Discovery-Translator
