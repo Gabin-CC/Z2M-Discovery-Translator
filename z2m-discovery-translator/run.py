@@ -174,19 +174,85 @@ def find_translation_from_value(value: Any) -> Optional[str]:
     return None
 
 
-def replace_known_label_in_name(name: str) -> str:
-    translated_name = find_translation_from_value(name)
-    if translated_name:
-        return translated_name
+WORD_RE = re.compile(r"[A-Za-z][A-Za-z0-9]*")
 
-    result = name
-    # Prefer replacing longer English labels first.
-    for source, target in sorted(raw_translations.items(), key=lambda item: len(item[0]), reverse=True):
-        if not isinstance(source, str) or not isinstance(target, str):
+# Known labels sorted longest-first so multi-word phrases win over their parts.
+SORTED_LABELS = sorted(
+    (
+        (source, target)
+        for source, target in raw_translations.items()
+        if isinstance(source, str) and isinstance(target, str) and source
+    ),
+    key=lambda item: len(item[0]),
+    reverse=True,
+)
+
+# Remember which untranslated words have already been logged (avoids spam on
+# retained-discovery republish).
+LOGGED_MISSING_WORDS: set = set()
+
+
+def translate_name(name: str):
+    """Translate a human-readable name.
+
+    Returns ``(translated, missing_words)``. An exact whole-name match wins; if
+    none exists, every known label found inside the name is replaced in place
+    (longest first), leaving untranslated words untouched. ``missing_words`` are
+    the word tokens of the original name that no entry could translate — logged
+    so they are easy to contribute back.
+    """
+    exact = find_translation_from_value(name)
+    if exact is not None:
+        return exact, []
+
+    covered = [False] * len(name)
+    replacements = []  # (start, end, target)
+
+    for source, target in SORTED_LABELS:
+        pattern = re.compile(
+            r"(?<![A-Za-z0-9_])" + re.escape(source) + r"(?![A-Za-z0-9_])",
+            re.IGNORECASE,
+        )
+        for match in pattern.finditer(name):
+            start, end = match.start(), match.end()
+            if any(covered[start:end]):
+                continue  # already taken by a longer label
+            replacements.append((start, end, target))
+            for index in range(start, end):
+                covered[index] = True
+
+    replacements.sort()
+    parts = []
+    position = 0
+    for start, end, target in replacements:
+        parts.append(name[position:start])
+        parts.append(target)
+        position = end
+    parts.append(name[position:])
+    result = "".join(parts)
+
+    missing = [
+        match.group()
+        for match in WORD_RE.finditer(name)
+        if not any(covered[match.start():match.end()])
+    ]
+    return result, missing
+
+
+def log_missing_words(name: str, missing: Iterable[str]) -> None:
+    fresh = []
+    for word in missing:
+        key = word.lower()
+        if key in LOGGED_MISSING_WORDS:
             continue
-        if " " in source and source.lower() in result.lower():
-            result = re.sub(re.escape(source), target, result, flags=re.IGNORECASE)
-    return result
+        LOGGED_MISSING_WORDS.add(key)
+        fresh.append(word)
+    if fresh:
+        print(
+            f"Traduction manquante ({language}) : {fresh} dans « {name} » — "
+            f"ajoutez ces mots à translations/{language}.json (PR bienvenue).",
+            flush=True,
+        )
 
 
 def candidate_values(component: Dict[str, Any], topic: str = "") -> Iterable[str]:
@@ -228,12 +294,18 @@ def translate_component(component: Any, topic: str = "") -> None:
 
     current_name = component.get("name")
 
-    if isinstance(current_name, str):
-        replaced_name = replace_known_label_in_name(current_name)
-        if replaced_name != current_name:
-            component["name"] = replaced_name
-            return
+    # A human-readable name is the authoritative label: translate it in place
+    # (exact match, otherwise per-label) instead of letting a single matching
+    # word overwrite the whole string.
+    if isinstance(current_name, str) and current_name.strip():
+        translated, missing = translate_name(current_name)
+        if missing:
+            log_missing_words(current_name, missing)
+        if translated != current_name:
+            component["name"] = translated
+        return
 
+    # No usable name: fall back to deriving one from object_id / topics.
     translated_name = find_component_translation(component, topic)
     if translated_name:
         component["name"] = translated_name

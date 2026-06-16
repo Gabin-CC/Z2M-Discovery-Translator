@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2
+
+- Per-word translation: names without an exact dictionary match are now translated label by label, keeping the untranslated words instead of collapsing the whole name to the first matching word (e.g. `Alarm siren duration` no longer became just `Alarm`).
+- Untranslated words are logged once each (`Traduction manquante (<lang>) : [...]`) to make contributing missing translations easy.
+
 ## 1.0.1
 
 - Expanded translation dictionaries (`fr`, `de`, `es`) with labels covering common Zigbee devices on the market:
