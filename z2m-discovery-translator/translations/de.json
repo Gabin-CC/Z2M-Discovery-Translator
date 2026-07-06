@@ -245,5 +245,19 @@
   "illuminance_above_threshold": "Beleuchtung über Schwelle",
   "illuminance above threshold": "Beleuchtung über Schwelle",
   "led_disabled_night": "LED nachts deaktiviert",
-  "led disabled night": "LED nachts deaktiviert"
+  "led disabled night": "LED nachts deaktiviert",
+
+  "opening state": "Öffnungszustand",
+  "alarm state": "Alarmstatus",
+  "setup mode": "Setup Modus",
+  "alarm siren": "Alarmsirene",
+  "alarm siren duration": "Dauer Alarmsirene",
+  "vibration limit": "Vibrationslimit",
+  "vibration siren": "Vibrationssirene",
+  "vibration siren duration": "Dauer Vibrationssirene",
+  "close signal": "Schließsignal",
+  "transmission power": "Sendeleistung",
+  "magnetic status": "Magnetstatus",
+  "connection state": "Verbindungsstatus",
+  "restart required": "Neustart erforderlich"
 }
