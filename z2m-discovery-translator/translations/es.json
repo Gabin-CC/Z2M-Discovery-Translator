@@ -245,5 +245,19 @@
   "illuminance_above_threshold": "Iluminancia por encima del umbral",
   "illuminance above threshold": "Iluminancia por encima del umbral",
   "led_disabled_night": "LED apagado de noche",
-  "led disabled night": "LED apagado de noche"
+  "led disabled night": "LED apagado de noche",
+
+  "opening state": "Estado de apertura",
+  "alarm state": "Estado de alarma",
+  "setup mode": "Modo de configuración",
+  "alarm siren": "Sirena de alarma",
+  "alarm siren duration": "Duración de sirena de alarma",
+  "vibration limit": "Límite de vibración",
+  "vibration siren": "Sirena de vibración",
+  "vibration siren duration": "Duración de sirena de vibración",
+  "close signal": "Señal de cierre",
+  "transmission power": "Potencia de transmisión",
+  "magnetic status": "Estado magnético",
+  "connection state": "Estado de conexión",
+  "restart required": "Reinicio necesario"
 }
