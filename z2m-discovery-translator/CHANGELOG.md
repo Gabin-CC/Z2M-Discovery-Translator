@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- Expanded translation dictionaries (`fr`, `de`, `es`) with alarm / door-window sensor labels contributed by @lanwin (Senoro.Win): `opening state`, `alarm state`, `setup mode`, `alarm siren`, `alarm siren duration`, `vibration limit`, `vibration siren`, `vibration siren duration`, `close signal`, `transmission power`, `magnetic status`, `connection state`, `restart required`.
+
 ## 1.0.2
 
 - Per-word translation: names without an exact dictionary match are now translated label by label, keeping the untranslated words instead of collapsing the whole name to the first matching word (e.g. `Alarm siren duration` no longer became just `Alarm`).
